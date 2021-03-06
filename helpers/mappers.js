@@ -10,7 +10,7 @@ export const getVisitedBrandName = () => {
   return rootStore.getters['brandStore/getTrackingBrandName'] || ''
 }
 
-export const mapCustomer = (user) => {
+export const mapAddress = (user) => {
   return {
     '$city': address.city,
     'City': address.city,
