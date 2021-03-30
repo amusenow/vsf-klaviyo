@@ -10,6 +10,16 @@ export const getVisitedBrandName = () => {
   return rootStore.getters['brandStore/getTrackingBrandName'] || ''
 }
 
+export const getFormattedPhoneNumber = (phone) => {
+  const countryCode = '+1'
+  return phone.includes(countryCode) ? phone : `${countryCode}${phone}`
+}
+
+export const getCustomerPhoneNumber = (user) => {
+  const telephone = user.telephone || user['$phone_number']
+  return telephone ? getFormattedPhoneNumber(telephone) : undefined
+}
+
 export const mapAddress = (address) => {
   return {
     '$city': address.city,
@@ -33,19 +43,19 @@ export const mapCustomer = (user) => {
     '$id': user.id || undefined,
     '$first_name': user.firstname || user.firstName || user['$first_name'] || undefined,
     '$last_name': user.lastname || user.lastName || user['$last_name'] || undefined,
-    '$phone_number': user.telephone || user['$phone_number'] || undefined
+    '$phone_number': getCustomerPhoneNumber(user)
   }
 
   if (user.custom_attributes && user.custom_attributes.length) {
     const phone = user.custom_attributes.find(attribute => attribute.attribute_code === 'phone')
 
     if (phone) {
-      customer['$phone_number'] = phone.value
+      customer['$phone_number'] = getFormattedPhoneNumber(phone.value)
     }
   }
 
   if ((!customer.hasOwnProperty('$phone_number') || !customer['$phone_number']) && user.extension_attributes && user.extension_attributes.phone) {
-    customer['$phone_number'] = user.extension_attributes.phone
+    customer['$phone_number'] = getFormattedPhoneNumber(user.extension_attributes.phone)
   }
 
   if (user.address) {
